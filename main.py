@@ -1,3 +1,5 @@
+#-*- coding: utf-8 -*-
+from __future__ import print_function, unicode_literals, absolute_import, division
 import sys
 import os
 sys.path.append("../")
@@ -7,7 +9,6 @@ import random
 import json
 
 import torch
-torch.backends.cudnn.enabled = True
 import torchvision.transforms as transforms
 import numpy as np
 
@@ -34,7 +35,8 @@ def main(args, scope):
 
     train_loader, val_loader = get_loader(args.dataset,
             batch_size=args.batch_size,
-            num_workers=args.workers
+            num_workers=args.workers,
+	    download=args.download
     )
 
     if args.mode == 'train':
@@ -100,6 +102,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--dataset', default='CIFAR10', type=str,
                         choices=['MNIST', 'CIFAR10', 'CIFAR100', 'ImageNet', 'TinyImageNet'])
+    parser.add_argument('--download', action='store_true')
     parser.add_argument('-b', '--batch_size', default=128, type=int,
                         metavar='N', help='mini-batch size (default: 128)')
     parser.add_argument("--verbose", default=1, type=int,
@@ -118,7 +121,7 @@ if __name__ == '__main__':
                         "The model must be saved in the checkpoint directory.")
     parser.add_argument("--ckpt_name", type=str, default=None)
 
-    parser.add_argument("--optimizer", default="SGD", type=str.lower,
+    parser.add_argument("--optimizer", default="sgd", type=lambda s: s.encode('utf8').lower(),
                         choices=['sgd', 'adam', 'rmsprop', 'sgd_nn', 'adadelta'])
     parser.add_argument('--momentum', default=0.9, type=float, metavar='M', help='momentum')
     parser.add_argument('--epochs', default=100, type=int, metavar='N',
